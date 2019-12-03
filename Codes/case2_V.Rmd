@@ -1,0 +1,137 @@
+---
+title: "MSDS 6306 - Case Study 02"
+author: "Huy Hoang Nguyen"
+date: "12/05/2019"
+output:
+  html_document: default
+pdf_document: default
+---
+
+
+```{r libraries, echo=F, results='hide', message=F, warning=F}
+library(tidyverse) #The "tidyverse" collects some of the most versatile R packages: ggplot2, dplyr, tidyr, readr, purrr, and tibble. The packages work in harmony to clean, process, model, and visualize data.
+library(skimr) #for data summary - so sweet and I like a lot this library
+library(mice) #package provides a nice function md.pattern() to get a better understanding of the pattern of missing data
+library(VIM) #more helpful visual representation can be obtained using the VIM package for agrr
+library(naniar) #https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html (for gg_mis_var) (Missing values)
+library(mlbench) #collection of artificial and real-world machine learning benchmark problems, including, e.g., several data sets from the UCI repository. (also has BostonHousing)
+library(caret)
+library(mlr)
+library(tidyverse)
+library(ggthemes)
+library(gplots)
+library(randomForest)
+library(corrplot)
+library(kableExtra)
+library(plotly)
+library(GGally) #for ggpairs
+
+```
+
+
+```{r data loading, echo=F, results='hide', message=F, warning=F}
+rawdata <- read.csv("https://github.com/hnguye01/hnguye01.github.io/raw/master/DS6306/Data/CaseStudy2-data.csv")
+head(rawdata)
+view(rawdata) #There are 870 entries, 36 total columns
+length(rawdata) #[1] 36
+skim(rawdata) #so sweet 0- for data summary
+```
+
+```{r dropping columns, echo=F, results='hide', message=F, warning=F}
+drop_columns <- which(apply(rawdata, 2, function(x) (length(unique(x)) == 1)))
+
+cols <- names(drop_columns)
+rawdata <- rawdata[,-drop_columns]
+
+#Actually, we can drop manually by another code as  rawdata <- select(rawdata, -c("Over18","EmployeeCount", "StandardHours")) . We will get the same results finally.
+
+skim(rawdata)
+```
+
+```{r dropping more columns, echo=F, results='hide', message=F, warning=F}
+rawdata <- select(rawdata, -c("ID","EmployeeNumber"))
+skim(rawdata)
+```
+
+```{r data0, echo=F, results='hide', message=F, warning=F}
+factorcolumns <- c("JobInvolvement", "JobSatisfaction", "PerformanceRating", "RelationshipSatisfaction", "WorkLifeBalance")
+
+rawdata[,factorcolumns] <- lapply(rawdata[,factorcolumns], as.factor)
+data0 <- rawdata #data0 - dataset that I use for the analysis
+skim(data0)
+
+```
+
+```{r data2 , echo=F, results='hide', message=F, warning=F}
+data2 <- select(data0, -c("HourlyRate","DailyRate", "MonthlyRate","PerformanceRating"))
+```
+
+
+## V. EDA3 - Numeric variables correlation
+
+The following  table will show us the correlations between numeric variables.
+
+```{r}
+
+correlator  <-  function(df){
+ df %>%
+    keep(is.numeric) %>%
+    tidyr::drop_na() %>%
+    cor %>%
+    corrplot("upper", addCoef.col = "white", number.digits = 2,
+             number.cex = 0.5, method="square",
+             order="hclust", 
+             tl.srt=50, tl.cex = 0.5)
+}
+correlator(data2)
+
+#Actually, we can remove tidyr::drop_na() %>%  because there is no missing data in this dataset
+
+#We can write the same code directly without using function as follows
+#data2 %>% keep(is.numeric) %>% na.omit %>% cor %>% corrplot("upper", addCoef.col = "white", number.digits = 2, number.cex = 0.5, method="square", order="hclust", tl.srt=50, tl.cex = 0.5)
+
+#We can remove na.omit %>% because there is no missing data in this dataset
+
+```
+
+### 1. Analysis on Monthly Income
+
+By this correlation table, we can see  
+
+- MonthlyIncome vs. JobLevel = 0.95  
+- MonthIncome vs. TotalWorkingYears = 0.78  
+- MonthlyIncome vs. YearsAtCompany = 0.49  
+- MonthlyIncome vs. Age = 0.48  
+- MonthlyIncome vs. YearsInCurrentRole = 0.36  
+- MonthlyIncome vs. YearsWithCurrManager = 0.33  
+- MonthlyIncome vs. YearsSinceLastPromotion = 0.32  
+
+Then by some analyses, we can see that Monthly Income have a strong correlation with Job Level. Month Income, Total Working Years and Job Level are correlated strongly. These correlations are logical.
+
+
+### 2. Analysis on Job Level
+
+
+- JobLevel vs. MonthlyIncome = 0.95  
+- JobLevel vs. TotalWorkingYears = 0.78  
+- JobLevel vs. YearsAtCompany = 0.52  
+- JobLevel vs. Age = 0.48  
+- JobLevel vs. YearsinCurrentRole = 0.39  
+- JobLevel vs. YearsWithCurrManager = 0.37  
+- JobLevel vs. YearsSinceLastPromotion = 0.33  
+
+Then by some analyses, we can see that Job Level have a strong correlation with Monthly Income. Month Income, Total Working Years and Job Level are correlated strongly. These correlations are logical.  
+
+
+```{r , echo=F, results='hide', message=F, warning=F}
+data2 %>% keep(is.numeric) %>% na.omit %>% cor %>% view()
+```
+
+
+
+
+
+
+
+
+
