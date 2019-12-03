@@ -1,0 +1,243 @@
+---
+title: "MSDS 6306 - Case Study 02"
+author: "Huy Hoang Nguyen"
+date: "12/05/2019"
+output:
+  html_document: default
+pdf_document: default
+---
+
+
+```{r libraries, echo=F, results='hide', message=F, warning=F}
+library(tidyverse) #The "tidyverse" collects some of the most versatile R packages: ggplot2, dplyr, tidyr, readr, purrr, and tibble. The packages work in harmony to clean, process, model, and visualize data.
+library(skimr) #for data summary - so sweet and I like a lot this library
+library(mice) #package provides a nice function md.pattern() to get a better understanding of the pattern of missing data
+library(VIM) #more helpful visual representation can be obtained using the VIM package for agrr
+library(naniar) #https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html (for gg_mis_var) (Missing values)
+library(mlbench) #collection of artificial and real-world machine learning benchmark problems, including, e.g., several data sets from the UCI repository. (also has BostonHousing)
+library(caret)
+library(mlr)
+library(tidyverse)
+library(ggthemes)
+library(gplots)
+library(randomForest)
+library(corrplot)
+library(kableExtra)
+library(plotly)
+library(GGally) #for ggpairs
+
+```
+
+
+```{r data loading, echo=F, results='hide', message=F, warning=F}
+rawdata <- read.csv("https://github.com/hnguye01/hnguye01.github.io/raw/master/DS6306/Data/CaseStudy2-data.csv")
+head(rawdata)
+view(rawdata) #There are 870 entries, 36 total columns
+length(rawdata) #[1] 36
+skim(rawdata) #so sweet 0- for data summary
+```
+
+```{r dropping columns, echo=F, results='hide', message=F, warning=F}
+drop_columns <- which(apply(rawdata, 2, function(x) (length(unique(x)) == 1)))
+
+cols <- names(drop_columns)
+rawdata <- rawdata[,-drop_columns]
+
+#Actually, we can drop manually by another code as  rawdata <- select(rawdata, -c("Over18","EmployeeCount", "StandardHours")) . We will get the same results finally.
+
+skim(rawdata)
+```
+
+```{r dropping more columns, echo=F, results='hide', message=F, warning=F}
+rawdata <- select(rawdata, -c("ID","EmployeeNumber"))
+skim(rawdata)
+```
+
+```{r data0, echo=F, results='hide', message=F, warning=F}
+factorcolumns <- c("JobInvolvement", "JobSatisfaction", "PerformanceRating", "RelationshipSatisfaction", "WorkLifeBalance")
+
+rawdata[,factorcolumns] <- lapply(rawdata[,factorcolumns], as.factor)
+data0 <- rawdata #data0 - dataset that I use for the analysis
+skim(data0)
+
+```
+
+```{r data2 , echo=F, results='hide', message=F, warning=F}
+data2 <- select(data0, -c("HourlyRate","DailyRate", "MonthlyRate","PerformanceRating"))
+```
+
+
+## IV. EDA2 - T-test Analysis
+
+### 1. t-test Analysis on Attrition variable:
+
+
+```{r Age}
+t.Age <- t.test(Age~Attrition, data=data2)
+t.Age
+t.MonthlyIncome <-  t.test(MonthlyIncome~Attrition, data=data2)
+t.MonthlyIncome
+t.Education <-  t.test(Education~Attrition, data=data2)
+t.Education
+t.DistanceFromHome <-  t.test(DistanceFromHome~Attrition, data=data2)
+t.DistanceFromHome
+t.EnvironmentSatisfaction <-  t.test(EnvironmentSatisfaction~Attrition, data=data2)
+t.EnvironmentSatisfaction
+t.JobLevel <-  t.test(JobLevel~Attrition, data=data2)
+t.JobLevel
+t.NumCompaniesWorked  <-  t.test(NumCompaniesWorked ~Attrition, data=data2)
+t.NumCompaniesWorked 
+t.PercentSalaryHike  <-  t.test(PercentSalaryHike ~Attrition, data=data2)
+t.PercentSalaryHike
+t.StockOptionLevel  <-  t.test(StockOptionLevel ~Attrition, data=data2)
+t.StockOptionLevel
+t.TotalWorkingYears  <-  t.test(TotalWorkingYears ~Attrition, data=data2)
+t.TotalWorkingYears
+t.TrainingTimesLastYear  <-  t.test(TrainingTimesLastYear ~Attrition, data=data2)
+t.TrainingTimesLastYear
+t.YearsAtCompany  <-  t.test(YearsAtCompany ~Attrition, data=data2)
+t.YearsAtCompany
+t.YearsInCurrentRole  <-  t.test(YearsInCurrentRole ~Attrition, data=data2)
+t.YearsInCurrentRole
+t.YearsSinceLastPromotion  <-  t.test(YearsSinceLastPromotion ~Attrition, data=data2)
+t.YearsSinceLastPromotion
+t.YearsWithCurrManager <-  t.test(YearsWithCurrManager ~Attrition, data=data2)
+t.YearsWithCurrManager
+
+```
+
+
+
+```{r}
+testnames <- c("Age","Monthly Income", "Education",
+               "Distance From Home", "Environment Satisfaction", 
+               "Job Level", "Number of Companies Worked",
+               "Percent Salary Hike", "Stock Option Level",
+               "Total Working Years", "Training Times Last Year",
+               "Years At Company", "Years In Current Role",
+               "Years Since Last Promotion", "Years With Current Manager"
+               )
+testpval <- c(t.Age$p.value,
+              t.MonthlyIncome$p.value,
+              t.Education$p.value,
+              t.DistanceFromHome$p.value,
+              t.EnvironmentSatisfaction$p.value,
+              t.JobLevel$p.value,
+              t.NumCompaniesWorked$p.value,
+              t.PercentSalaryHike$p.value,
+              t.StockOptionLevel$p.value,
+              t.TotalWorkingYears$p.value,
+              t.TrainingTimesLastYear$p.value,
+              t.YearsAtCompany$p.value,
+              t.YearsInCurrentRole$p.value,
+              t.YearsSinceLastPromotion$p.value,
+              t.YearsWithCurrManager$p.value
+              )
+ttestout <- cbind.data.frame(testnames,testpval)
+ttestout$testpval <- round(ttestout$testpval,10) 
+names(ttestout) <- c("Variable","P-Value")
+```
+
+
+The p-values of t-test analyses related to Attrition variable:
+
+
+```{r}
+ttestout %>% kable()
+```
+
+
+
+- There are two groups for Attrition variable (Yes and No).   
+- At $\alpha$-level of significance = 0.05, if p-value<0.05 then we reject the null hypothesis (There are some evidence to suggest that the mean difference in the selected variable for two groups Yes-No of Attrition variable) and if p-value>0.05 then we fail to reject the null hypothesis (There are not enough evidence to suggest that the mean difference in the selected variable for two groups Yes-No of Attrition variable).  
+- By  t-test analysis, we will have some ideas to build our models later.  
+
+
+### 2. t-test Analysis related to Gender variable:
+
+
+We now will  use t-test to see the difference of Monthly Income in Job role between Male and Female.  
+
+```{r}
+summary(data2$JobRole)
+table(data2$Gender,data2$JobRole)
+```
+
+```{r filter job role}
+data2.Healthcare <- data2 %>% filter(JobRole=="Healthcare Representative")
+data2.HR <- data2 %>% filter(JobRole=="Human Resources")
+data2.Technician <- data2 %>% filter(JobRole=="Laboratory Technician")
+data2.Manager <- data2 %>% filter(JobRole=="Manager")
+data2.MDirector <- data2 %>% filter(JobRole=="Manufacturing Director")
+data2.RDirector <- data2 %>% filter(JobRole=="Research Director")
+data2.Scientist <- data2 %>% filter(JobRole=="Research Scientist")
+data2.SExecutive <- data2 %>% filter(JobRole=="Sales Executive")
+data2.SRepresentative <- data2 %>% filter(JobRole=="Sales Representative")
+```
+
+```{r}
+t.jHealthcare <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jHealthcare 
+
+t.jHR <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jHR 
+
+t.jTechnician <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jTechnician 
+
+t.jManager <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jManager
+
+t.jMDirector <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jMDirector
+
+t.jRDirector <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jRDirector
+
+t.jScientist <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jScientist
+
+t.jSExecutive <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jSExecutive
+
+t.jSRepresentative <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jSRepresentative
+
+```
+
+
+
+```{r}
+testnames1 <- c("Healthcare Representative", "Human Resources", "Laboratory Technician",
+               "Manager", "Manufacturing Director", "Research Director", "Research Scientist",
+               "Sales Executive", "Sales Representative")
+testpval1 <- c(t.jHealthcare$p.value,
+              t.jHR$p.value,
+              t.jTechnician$p.value,
+              t.jManager$p.value,
+              t.jMDirector$p.value,
+              t.jRDirector$p.value,
+              t.jScientist$p.value,
+              t.jSExecutive$p.value,
+              t.jSRepresentative$p.value
+              )
+ttestout1 <- cbind.data.frame(testnames1,testpval1)
+ttestout1$testpval1 <- round(ttestout1$testpval1,10) 
+names(ttestout1) <- c("Variable","P-Value")
+```
+
+
+
+The p-values of t-test analyses related to Monthly Income in Job role between Male and Female:
+
+
+
+```{r}
+ttestout1 %>% kable()
+```
+
+
+
+- There are two groups Male and Female for Gender variable.   
+- At $\alpha$-level of significance = 0.05 and  p-value>0.05 then we fail to reject the null hypothesis (There are not enough evidence to suggest that the mean difference in Monthly Income related to Job Role for two groups Male-Female of Gender variable).  
+- By  t-test analysis, we will have some ideas to build our models later.  
