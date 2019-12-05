@@ -19,15 +19,16 @@
   - case2_VII - EDA5 - Multiple Linear Regression and Validation for Salary  
   - case2_VIII - EDA6 - Naive Bayes classifiers and Validation for Attrition 
 * [Validation] - contains CSV files related to the Prediction and Validation for Salary and Attrition  
-* [Datasets] - contains project descriptions files and datatsets used in this project   
-
 * [Presentations] - My Final Presentation Slides 
+* [DDSAnalytics App] - an App for data visualization 
+* [Datasets] - contains project descriptions files and datatsets used in this project 
 
 ## Author  
 Huy Hoang Nguyen: hoangnguyen@smu.edu 
 
 [CodeBook]: <https://github.com/hnguye01/6306two/tree/master/Codes>  
 [Validation]: <https://github.com/hnguye01/6306two/tree/master/Validation%20>
+[DDSAnalytics App]: <http://www.hoangnguyen.us>
 [Datasets]: <https://github.com/hnguye01/6306two/tree/master/Datasets>
 
 
