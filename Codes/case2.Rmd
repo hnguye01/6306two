@@ -15,6 +15,10 @@ pdf_document: default
 - Here I will do a data analysis on a given dataset CaseStudy2-data.csv  to identify factors that lead to attrition.  I will identify the top three factors that contribute to turnover (backed up by evidence provided by analysis). There may or may not be a need to create derived attributes/variables/features. The business is also interested in learning about any job role specific trends that may exist in the data set (e.g., “Data Scientists have the highest job satisfaction”). I also provide any other interesting trends and observations from the analysis. The analysis will be backed up by robust experimentation and appropriate visualization. Experiments and analysis  are conducted in R. I will also build a model to predict attrition.   
 
 
+
+ 
+
+
 ## II. Preparing Steps
 
 ### 1. Used Libraries:
@@ -36,17 +40,23 @@ library(corrplot)
 library(kableExtra)
 library(plotly)
 library(GGally) #for ggpairs
+library(Boruta) #for Automated EDA later
+library(readxl) #read excel
+library(e1071) #Naive Bayes
+
 
 ```
 
 ### 2. Loading the data: 
 
 ```{r data loading}
-rawdata <- read.csv("https://github.com/hnguye01/hnguye01.github.io/raw/master/DS6306/Data/CaseStudy2-data.csv")
-head(rawdata)
-view(rawdata) #There are 870 entries, 36 total columns
-length(rawdata) #[1] 36
-skim(rawdata) #so sweet 0- for data summary
+rawdata0 <- read.csv("CaseStudy2-data.csv")
+head(rawdata0)
+view(rawdata0) #There are 870 entries, 36 total columns
+length(rawdata0) #[1] 36
+skim(rawdata0) #so sweet 0- for data summary
+
+rawdata <- rawdata0
 ```
 
 
@@ -112,6 +122,10 @@ skim(data0)
 Then now we have 13 factor columns and 18 numeric columns in the dataset.   
 
 In the next part, I will do Exploratory Data Analysis (or EDA). First, I will analyze the dataset in each variable. 
+
+
+
+
 
 
 ## III. EDA1 - Analysis of each variable and some related variables
@@ -966,6 +980,473 @@ After the first analyses on each variable,I will create a new dataset as follows
 data2 <- select(data0, -c("HourlyRate","DailyRate", "MonthlyRate","PerformanceRating"))
 skim(data2)
 ```
+
+
+
+
+
+
+## IV. EDA2 - T-test Analysis
+
+### 1. t-test Analysis on Attrition variable:
+
+
+```{r Age}
+t.Age <- t.test(Age~Attrition, data=data2)
+t.Age
+t.MonthlyIncome <-  t.test(MonthlyIncome~Attrition, data=data2)
+t.MonthlyIncome
+t.Education <-  t.test(Education~Attrition, data=data2)
+t.Education
+t.DistanceFromHome <-  t.test(DistanceFromHome~Attrition, data=data2)
+t.DistanceFromHome
+t.EnvironmentSatisfaction <-  t.test(EnvironmentSatisfaction~Attrition, data=data2)
+t.EnvironmentSatisfaction
+t.JobLevel <-  t.test(JobLevel~Attrition, data=data2)
+t.JobLevel
+t.NumCompaniesWorked  <-  t.test(NumCompaniesWorked ~Attrition, data=data2)
+t.NumCompaniesWorked 
+t.PercentSalaryHike  <-  t.test(PercentSalaryHike ~Attrition, data=data2)
+t.PercentSalaryHike
+t.StockOptionLevel  <-  t.test(StockOptionLevel ~Attrition, data=data2)
+t.StockOptionLevel
+t.TotalWorkingYears  <-  t.test(TotalWorkingYears ~Attrition, data=data2)
+t.TotalWorkingYears
+t.TrainingTimesLastYear  <-  t.test(TrainingTimesLastYear ~Attrition, data=data2)
+t.TrainingTimesLastYear
+t.YearsAtCompany  <-  t.test(YearsAtCompany ~Attrition, data=data2)
+t.YearsAtCompany
+t.YearsInCurrentRole  <-  t.test(YearsInCurrentRole ~Attrition, data=data2)
+t.YearsInCurrentRole
+t.YearsSinceLastPromotion  <-  t.test(YearsSinceLastPromotion ~Attrition, data=data2)
+t.YearsSinceLastPromotion
+t.YearsWithCurrManager <-  t.test(YearsWithCurrManager ~Attrition, data=data2)
+t.YearsWithCurrManager
+
+```
+
+
+
+```{r}
+testnames <- c("Age","Monthly Income", "Education",
+               "Distance From Home", "Environment Satisfaction", 
+               "Job Level", "Number of Companies Worked",
+               "Percent Salary Hike", "Stock Option Level",
+               "Total Working Years", "Training Times Last Year",
+               "Years At Company", "Years In Current Role",
+               "Years Since Last Promotion", "Years With Current Manager"
+               )
+testpval <- c(t.Age$p.value,
+              t.MonthlyIncome$p.value,
+              t.Education$p.value,
+              t.DistanceFromHome$p.value,
+              t.EnvironmentSatisfaction$p.value,
+              t.JobLevel$p.value,
+              t.NumCompaniesWorked$p.value,
+              t.PercentSalaryHike$p.value,
+              t.StockOptionLevel$p.value,
+              t.TotalWorkingYears$p.value,
+              t.TrainingTimesLastYear$p.value,
+              t.YearsAtCompany$p.value,
+              t.YearsInCurrentRole$p.value,
+              t.YearsSinceLastPromotion$p.value,
+              t.YearsWithCurrManager$p.value
+              )
+ttestout <- cbind.data.frame(testnames,testpval)
+ttestout$testpval <- round(ttestout$testpval,10) 
+names(ttestout) <- c("Variable","P-Value")
+```
+
+
+The p-values of t-test analyses related to Attrition variable:
+
+
+```{r}
+ttestout %>% kable()
+```
+
+
+
+- There are two groups for Attrition variable (Yes and No).   
+- At $\alpha$-level of significance = 0.05, if p-value<0.05 then we reject the null hypothesis (There are some evidence to suggest that the mean difference in the selected variable for two groups Yes-No of Attrition variable) and if p-value>0.05 then we fail to reject the null hypothesis (There are not enough evidence to suggest that the mean difference in the selected variable for two groups Yes-No of Attrition variable).  
+- By  t-test analysis, we will have some ideas to build our models later.  
+
+
+### 2. t-test Analysis related to Gender variable:
+
+
+We now will  use t-test to see the difference of Monthly Income in Job role between Male and Female.  
+
+```{r}
+summary(data2$JobRole)
+table(data2$Gender,data2$JobRole)
+```
+
+```{r filter job role}
+data2.Healthcare <- data2 %>% filter(JobRole=="Healthcare Representative")
+data2.HR <- data2 %>% filter(JobRole=="Human Resources")
+data2.Technician <- data2 %>% filter(JobRole=="Laboratory Technician")
+data2.Manager <- data2 %>% filter(JobRole=="Manager")
+data2.MDirector <- data2 %>% filter(JobRole=="Manufacturing Director")
+data2.RDirector <- data2 %>% filter(JobRole=="Research Director")
+data2.Scientist <- data2 %>% filter(JobRole=="Research Scientist")
+data2.SExecutive <- data2 %>% filter(JobRole=="Sales Executive")
+data2.SRepresentative <- data2 %>% filter(JobRole=="Sales Representative")
+```
+
+```{r}
+t.jHealthcare <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jHealthcare 
+
+t.jHR <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jHR 
+
+t.jTechnician <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jTechnician 
+
+t.jManager <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jManager
+
+t.jMDirector <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jMDirector
+
+t.jRDirector <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jRDirector
+
+t.jScientist <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jScientist
+
+t.jSExecutive <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jSExecutive
+
+t.jSRepresentative <- t.test(MonthlyIncome ~ Gender, data = data2.Healthcare)
+t.jSRepresentative
+
+```
+
+
+
+```{r}
+testnames1 <- c("Healthcare Representative", "Human Resources", "Laboratory Technician",
+               "Manager", "Manufacturing Director", "Research Director", "Research Scientist",
+               "Sales Executive", "Sales Representative")
+testpval1 <- c(t.jHealthcare$p.value,
+              t.jHR$p.value,
+              t.jTechnician$p.value,
+              t.jManager$p.value,
+              t.jMDirector$p.value,
+              t.jRDirector$p.value,
+              t.jScientist$p.value,
+              t.jSExecutive$p.value,
+              t.jSRepresentative$p.value
+              )
+ttestout1 <- cbind.data.frame(testnames1,testpval1)
+ttestout1$testpval1 <- round(ttestout1$testpval1,10) 
+names(ttestout1) <- c("Variable","P-Value")
+```
+
+
+
+The p-values of t-test analyses related to Monthly Income in Job role between Male and Female:
+
+
+
+```{r}
+ttestout1 %>% kable()
+```
+
+
+
+- There are two groups Male and Female for Gender variable.   
+- At $\alpha$-level of significance = 0.05 and  p-value>0.05 then we fail to reject the null hypothesis (There are not enough evidence to suggest that the mean difference in Monthly Income related to Job Role for two groups Male-Female of Gender variable).  
+- By  t-test analysis, we will have some ideas to build our models later.  
+
+
+
+
+
+## V. EDA3 - Numeric variables correlation
+
+
+In this part, we will have more information related to Monthly Income and Attrition. We will combine our analysis on each variable in the last part.
+
+
+
+The following  table will show us the correlations between numeric variables. 
+
+```{r}
+
+correlator  <-  function(df){
+ df %>%
+    keep(is.numeric) %>%
+    tidyr::drop_na() %>%
+    cor %>%
+    corrplot("upper", addCoef.col = "white", number.digits = 2,
+             number.cex = 0.5, method="square",
+             order="hclust", 
+             tl.srt=50, tl.cex = 0.5)
+}
+correlator(data2)
+
+#Actually, we can remove tidyr::drop_na() %>%  because there is no missing data in this dataset
+
+#We can write the same code directly without using function as follows
+#data2 %>% keep(is.numeric) %>% na.omit %>% cor %>% corrplot("upper", addCoef.col = "white", number.digits = 2, number.cex = 0.5, method="square", order="hclust", tl.srt=50, tl.cex = 0.5)
+
+#We can remove na.omit %>% because there is no missing data in this dataset
+
+```
+
+### 1. Analysis on Monthly Income
+
+By this correlation table, we see
+
+Relationship       |	MonthlyIncome
+------------------ | -------------
+JobLevel           | 	0.95
+TotalWorkingYears  |	0.78
+YearsAtCompany	   |  0.49
+Age                 |  0.48
+YearsInCurrentRole  |  0.36
+YearsWithCurrManager  |  0.33
+YearsSinceLastPromotion  |  0.32
+
+
+
+Then by some analyses, we can see that Monthly Income have a strong correlation with Job Level. Month Income, Total Working Years and Job Level are correlated strongly. These correlations are logical.
+
+
+### 2. Analysis on Job Level
+
+We have
+
+Relationship  |  JobLevel
+--------------|----------
+MonthlyIncome  |  0.95  
+TotalWorkingYears  | 0.78  
+YearsAtCompany  |  0.52  
+Age  | 0.48
+YearsinCurrentRole  |  0.39  
+YearsWithCurrManager  |  0.37  
+YearsSinceLastPromotion  |  0.33  
+
+
+Then by some analyses, we can see that Job Level have a strong correlation with Monthly Income. Month Income, Total Working Years and Job Level are correlated strongly. These correlations are logical.  
+
+### 3. Analysis on Atrrition  
+
+By **EDA1 - Analysis on each variable** and by the correlation plot, we can see that some  numerical variables have relationship with Attrition here (MonthlyIncome ~ TotalWorkingYears, JobLevel ~ TotalWorkingYears, YearsAtCompany ~ YearsinCurrentRole, YearsWithCurrManager  ~ YearsinCurrentRole, YearsWithCurrManager  ~ YearsAtCompany). 
+
+We will do another analysis in the next part to decide a good model.  
+
+
+
+
+
+## VI. EDA4 - Automated EDA
+
+### 1. Analysis on Monthly Income
+
+
+Now I will use Automated EDA for Feature Selection. I use the library Boruta here to select important variables related to MonthlyIncome variable. 
+(http://r-statistics.co/Variable-Selection-and-Importance-With-R.html)  
+
+
+
+
+```{r, echo=T, message=F, warning=F}
+boruta_output <- Boruta(MonthlyIncome ~ ., data=data2, doTrace=2)
+boruta_signif <- names(boruta_output$finalDecision[boruta_output$finalDecision %in% c("Confirmed", "Tentative")])  # collect Confirmed and Tentative variables
+print(boruta_signif)  # significant variables
+plot(boruta_output, cex.axis=.7, las=2, xlab="", main="Variable Importance")
+```
+
+ 
+Then after running this code, I have 14 important variables as follows: Age,              Attrition, BusinessTravel, Department, Education, JobLevel, JobRole, NumCompaniesWorked, TotalWorkingYears, YearsAtCompany, YearsInCurrentRole, YearsSinceLastPromotion, YearsWithCurrManager.   
+
+
+### 2. Analysis on Attrition
+
+Similarly, I will run the following code 
+
+
+```{r, echo=T, message=F, warning=F}
+boruta_output <- Boruta(Attrition ~ ., data=rawdata0, doTrace=2)
+boruta_signif <- names(boruta_output$finalDecision[boruta_output$finalDecision %in% c("Confirmed", "Tentative")])  # collect Confirmed and Tentative variables
+print(boruta_signif)  # significant variables
+plot(boruta_output, cex.axis=.7, las=2, xlab="", main="Variable Importance")
+```
+
+
+Then I will use important variable to build a model later: Age, Department,  EnvironmentSatisfaction,  JobInvolvement,  JobLevel, JobRole,  JobSatisfaction, MaritalStatus,  MonthlyIncome, NumCompaniesWorked,  OverTime, StockOptionLevel,  TotalWorkingYears, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager.  
+
+
+
+
+
+## VII. EDA5 - Multiple Linear Regression for Salary 
+
+
+Here we will use our EDA4 to build model for Monthly Income.
+
+
+### 1. Build a Model   
+
+
+I will build a multiple linear regression on Monthly Income related to 14 important variables in the last part.
+
+
+
+```{r}
+
+set.seed(100)
+data3 <- select(rawdata, "MonthlyIncome", "Age", "Attrition", "BusinessTravel", "Department", "Education", "JobLevel", "JobRole", "NumCompaniesWorked", "TotalWorkingYears", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager")
+splitPerc1 = 0.8
+trainIndices1 = sample(1:dim(data3)[1],round(splitPerc1 * dim(data3)[1]))
+train1 = data3[trainIndices1,]
+test1 = data3[-trainIndices1,]
+lm1 = lm(MonthlyIncome ~ ., data = train1)
+summary(lm1)
+pred1 = predict(lm1, test1)
+RMSE = sqrt(mean((test1$MonthlyIncome - pred1)^2))
+RMSE
+
+
+```
+
+
+Then RMSE is around $1031.816.   
+
+
+
+### 2. Validation Requirement for Salary
+
+
+Here I will use the file CaseStudy2CompSet No Salary.xlsx and create new dataframe case2nosalary1  with the same variables as the dataframe data3 in the last step (Build a Model) (without MonthlyIncome variable).
+
+
+```{r}
+case2nosalary <- read_excel("CaseStudy2CompSet No Salary.xlsx")
+case2nosalary1 <- select(case2nosalary, "Age", "Attrition", "BusinessTravel", "Department", "Education", "JobLevel", "JobRole", "NumCompaniesWorked", "TotalWorkingYears", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager")
+```
+
+
+Now I will use  the model built in the last step to predicting the salary for the file CaseStudy2CompSet No Salary.xlsx. 
+
+
+
+```{r}
+
+lm2 = lm(MonthlyIncome ~ ., data = data3)
+pred2 = predict(lm2, case2nosalary1)
+
+
+MonthlyIncome = pred2
+MonthlyIncome = as.data.frame(MonthlyIncome)
+
+case2nosalary2 = cbind(case2nosalary, MonthlyIncome)
+
+
+write.csv(case2nosalary2, "Case2PredictionsNguyenSalary.csv", row.names = FALSE)
+
+case2nosalary3 <- read.csv("Case2PredictionsNguyenSalary.csv", header = T)
+
+head(case2nosalary3)
+
+```
+
+Later, I will upload the preditecd file Case2PredictionsNguyenSalary.csv for Salary into github. 
+
+
+
+
+## VIII. EDA6 - Naive Bayes classifiers for Attrition
+
+
+Here I will use our EDA4 to build model for Attrition. I will use these vatiables: Age, Department,  EnvironmentSatisfaction,  JobInvolvement,  JobLevel, JobRole,  JobSatisfaction, MaritalStatus,  MonthlyIncome, NumCompaniesWorked,  OverTime, StockOptionLevel,  TotalWorkingYears, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager. 
+
+### 1. Build a Model   
+
+
+I will use Naive Bayes classifiers to build a model here.
+
+
+```{r}
+
+
+data4 <- select(rawdata, "Attrition", "Age", "Department",  "EnvironmentSatisfaction",  "JobInvolvement",  "JobLevel", "JobRole",  "JobSatisfaction", "MaritalStatus",  "MonthlyIncome", "NumCompaniesWorked",  "OverTime", "StockOptionLevel",  "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+
+
+set.seed(10000)
+splitPercNB1 = 0.8
+trainIndicesNB1 = sample(1:dim(data4)[1],round(splitPercNB1 * dim(data4)[1]))
+trainNB1 = data4[trainIndicesNB1,]
+testNB1 = data4[-trainIndicesNB1,]
+
+NB1 <- naiveBayes(Attrition~.,data = trainNB1,laplace = -1)
+predNB1 = predict(NB1, testNB1)
+
+table(as.factor(testNB1$Attrition),predNB1)
+
+#Confusion Matrix
+confusion.Matrix = confusionMatrix(predNB1,as.factor(testNB1$Attrition))
+confusion.Matrix
+Sensitivity = confusion.Matrix$byClass['Sensitivity']
+Specificity = confusion.Matrix$byClass['Specificity']
+Accuracy = confusion.Matrix$overall['Accuracy']
+
+Accuracy
+Sensitivity
+Specificity
+
+
+
+
+
+
+
+```
+
+### 2. Validation Requirement for Attrition  
+
+
+Here I will use the file CaseStudy2CompSet No Attrition.csv and create new dataframe case2noattrition1  with the same variables as the dataframe data4 in the last step (Build a Model) (without Attrition variable).
+
+
+```{r}
+case2noattrition <- read.csv("CaseStudy2CompSet No Attrition.csv")
+case2noattrition1 <- select(case2noattrition, "Age", "Department",  "EnvironmentSatisfaction",  "JobInvolvement",  "JobLevel", "JobRole",  "JobSatisfaction", "MaritalStatus",  "MonthlyIncome", "NumCompaniesWorked",  "OverTime", "StockOptionLevel",  "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+```
+
+
+Now I will use  the model built in the last step to predicting Attrition for the file CaseStudy2CompSet No Attrition.csv. 
+
+
+
+```{r}
+
+
+set.seed(10000)
+
+NB2 <- naiveBayes(Attrition~.,data = data4,laplace = -1)
+predNB2 = predict(NB2, case2noattrition1)
+
+
+Attrition = predNB2
+Attrition = as.data.frame(Attrition)
+case2noattrition2 = cbind(case2noattrition,Attrition)
+
+write.csv(case2noattrition2,"Case2PredictionsNguyenAttrition.csv", row.names = FALSE)
+
+case2noattrition3 <- read.csv("Case2PredictionsNguyenAttrition.csv", header = T)
+
+head(case2noattrition3)
+```
+
+
+
+
+Later, I will upload the preditecd file Case2PredictionsNguyenAttrition.csv for Salary into github. 
 
 
 
