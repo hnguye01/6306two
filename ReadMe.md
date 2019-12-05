@@ -10,7 +10,7 @@
 ## Contents
 * [CodeBook] - contains a codebook for the project   
   - case2 - full codes of the project  
-  - case2_I - Project Descriptions   - https://hnguye01.github.io/DS6306/html/case2_I.html
+  - case2_I - Project Descriptions   
   - case2_II - Preparing Steps  
   - case2_III - EDA1 - Analysis of each variable and some related variables   
   - case2_IV - EDA2 - T-test Analysis   
