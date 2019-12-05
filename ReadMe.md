@@ -20,6 +20,7 @@
   - case2_VIII - EDA6 - Naive Bayes classifiers and Validation for Attrition 
 * [Validation] - contains CSV files related to the Prediction and Validation for Salary and Attrition  
 * [Presentations] - My Final Presentation Slides 
+* [Youtube Presentation] - Youtube link of my presentation
 * [DDSAnalytics App] - an App for data visualization 
 * [Datasets] - contains project descriptions files and datatsets used in this project 
 * HTML Links
@@ -38,6 +39,8 @@ Huy Hoang Nguyen: hoangnguyen@smu.edu
 
 [CodeBook]: <https://github.com/hnguye01/6306two/tree/master/Codes>  
 [Validation]: <https://github.com/hnguye01/6306two/tree/master/Validation%20>
+[Presentations]: <https://github.com/hnguye01/6306two/tree/master/Presentation>
+[Youtube Presentation]: <https://youtu.be/aYBJdQAcIAU>
 [DDSAnalytics App]: < https://hnguye01.shinyapps.io/DDSAnalyticsApp/>
 [Datasets]: <https://github.com/hnguye01/6306two/tree/master/Datasets>
 
