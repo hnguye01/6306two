@@ -25,11 +25,14 @@ library(corrplot)
 library(kableExtra)
 library(plotly)
 library(GGally) #for ggpairs
+library(Boruta)
 
 ```
 
 
 ```{r data loading, echo=F, results='hide', message=F, warning=F}
+
+
 rawdata0 <- read.csv("CaseStudy2-data.csv")
 head(rawdata0)
 view(rawdata0) #There are 870 entries, 36 total columns
@@ -77,79 +80,43 @@ data1[,factorcolumns1] <- lapply(data1[,factorcolumns1], as.factor)
 ```
 
 
-## V. EDA3 - Numeric variables correlation
-
-
-In this part, we will have more information related to Monthly Income and Attrition. We will combine our analysis on each variable in the last part.
-
-
-
-The following  table will show us the correlations between numeric variables. 
-
-```{r}
-
-correlator  <-  function(df){
- df %>%
-    keep(is.numeric) %>%
-    tidyr::drop_na() %>%
-    cor %>%
-    corrplot("upper", addCoef.col = "white", number.digits = 2,
-             number.cex = 0.5, method="square",
-             order="hclust", 
-             tl.srt=50, tl.cex = 0.5)
-}
-correlator(data2)
-
-#Actually, we can remove tidyr::drop_na() %>%  because there is no missing data in this dataset
-
-#We can write the same code directly without using function as follows
-#data2 %>% keep(is.numeric) %>% na.omit %>% cor %>% corrplot("upper", addCoef.col = "white", number.digits = 2, number.cex = 0.5, method="square", order="hclust", tl.srt=50, tl.cex = 0.5)
-
-#We can remove na.omit %>% because there is no missing data in this dataset
-
-```
+## VI. EDA4 - Automated EDA
 
 ### 1. Analysis on Monthly Income
 
-By this correlation table, we see
 
-Relationship       |	MonthlyIncome
------------------- | -------------
-JobLevel           | 	0.95
-TotalWorkingYears  |	0.78
-YearsAtCompany	   |  0.49
-Age                 |  0.48
-YearsInCurrentRole  |  0.36
-YearsWithCurrManager  |  0.33
-YearsSinceLastPromotion  |  0.32
+Now I will use Automated EDA for Feature Selection. I use the library Boruta here to select important variables related to MonthlyIncome variable. 
+(http://r-statistics.co/Variable-Selection-and-Importance-With-R.html)  
 
 
 
-Then by some analyses, we can see that Monthly Income have a strong correlation with Job Level. Month Income, Total Working Years and Job Level are correlated strongly. These correlations are logical.
+
+```{r, echo=T, message=F, warning=F}
+boruta_output <- Boruta(MonthlyIncome ~ ., data=data2, doTrace=2)
+boruta_signif <- names(boruta_output$finalDecision[boruta_output$finalDecision %in% c("Confirmed", "Tentative")])  # collect Confirmed and Tentative variables
+print(boruta_signif)  # significant variables
+plot(boruta_output, cex.axis=.7, las=2, xlab="", main="Variable Importance")
+```
+
+ 
+Then after running this code, I have 14 important variables as follows: Age,              Attrition, BusinessTravel, Department, Education, JobLevel, JobRole, NumCompaniesWorked, TotalWorkingYears, YearsAtCompany, YearsInCurrentRole, YearsSinceLastPromotion, YearsWithCurrManager.   
 
 
-### 2. Analysis on Job Level
+### 2. Analysis on Attrition
 
-We have
-
-Relationship  |  JobLevel
---------------|----------
-MonthlyIncome  |  0.95  
-TotalWorkingYears  | 0.78  
-YearsAtCompany  |  0.52  
-Age  | 0.48
-YearsinCurrentRole  |  0.39  
-YearsWithCurrManager  |  0.37  
-YearsSinceLastPromotion  |  0.33  
+Similarly, I will run the following code 
 
 
-Then by some analyses, we can see that Job Level have a strong correlation with Monthly Income. Month Income, Total Working Years and Job Level are correlated strongly. These correlations are logical.  
+```{r, echo=T, message=F, warning=F}
+boruta_output <- Boruta(Attrition ~ ., data=rawdata0, doTrace=2)
+boruta_signif <- names(boruta_output$finalDecision[boruta_output$finalDecision %in% c("Confirmed", "Tentative")])  # collect Confirmed and Tentative variables
+print(boruta_signif)  # significant variables
+plot(boruta_output, cex.axis=.7, las=2, xlab="", main="Variable Importance")
+```
 
-### 3. Analysis on Atrrition  
 
-By **EDA1 - Analysis on each variable** and by the correlation plot, we can see that some  numerical variables have relationship with Attrition here (MonthlyIncome ~ TotalWorkingYears, JobLevel ~ TotalWorkingYears, YearsAtCompany ~ YearsinCurrentRole, YearsWithCurrManager  ~ YearsinCurrentRole, YearsWithCurrManager  ~ YearsAtCompany). 
+Then I will use important variable to build a model later: Age, Department,  EnvironmentSatisfaction,  JobInvolvement,  JobLevel, JobRole,  JobSatisfaction, MaritalStatus,  MonthlyIncome, NumCompaniesWorked,  OverTime, StockOptionLevel,  TotalWorkingYears, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager.  
 
-We will do another analysis in the next part to decide a good model.  
 
 
 

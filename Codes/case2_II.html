@@ -389,12 +389,15 @@ library(randomForest)
 library(corrplot)
 library(kableExtra)
 library(plotly)
-library(GGally) #for ggpairs</code></pre>
+library(GGally) #for ggpairs
+library(Boruta) #for Automated EDA later
+library(readxl) #read excel
+library(e1071) #Naive Bayes</code></pre>
 </div>
 <div id="loading-the-data" class="section level3">
 <h3>2. Loading the data:</h3>
-<pre class="r"><code>rawdata &lt;- read.csv(&quot;https://github.com/hnguye01/hnguye01.github.io/raw/master/DS6306/Data/CaseStudy2-data.csv&quot;)
-head(rawdata)</code></pre>
+<pre class="r"><code>rawdata0 &lt;- read.csv(&quot;CaseStudy2-data.csv&quot;)
+head(rawdata0)</code></pre>
 <pre><code>##   ID Age Attrition    BusinessTravel DailyRate             Department
 ## 1  1  32        No     Travel_Rarely       117                  Sales
 ## 2  2  40        No     Travel_Rarely      1308 Research &amp; Development
@@ -458,10 +461,10 @@ head(rawdata)</code></pre>
 ## 4                    7
 ## 5                    3
 ## 6                    7</code></pre>
-<pre class="r"><code>view(rawdata) #There are 870 entries, 36 total columns
-length(rawdata) #[1] 36</code></pre>
+<pre class="r"><code>view(rawdata0) #There are 870 entries, 36 total columns
+length(rawdata0) #[1] 36</code></pre>
 <pre><code>## [1] 36</code></pre>
-<pre class="r"><code>skim(rawdata) #so sweet 0- for data summary</code></pre>
+<pre class="r"><code>skim(rawdata0) #so sweet 0- for data summary</code></pre>
 <table style="width: auto;" class="table table-condensed">
 <caption>
 Data summary
@@ -480,7 +483,7 @@ Data summary
 Name
 </td>
 <td style="text-align:left;">
-rawdata
+rawdata0
 </td>
 </tr>
 <tr>
@@ -1740,6 +1743,7 @@ YearsWithCurrManager
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>rawdata &lt;- rawdata0</code></pre>
 <p>Then the dataset has 870 observations and 36 variables.</p>
 </div>
 <div id="checking-for-missing-data" class="section level3">

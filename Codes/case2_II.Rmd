@@ -30,17 +30,23 @@ library(corrplot)
 library(kableExtra)
 library(plotly)
 library(GGally) #for ggpairs
+library(Boruta) #for Automated EDA later
+library(readxl) #read excel
+library(e1071) #Naive Bayes
+
 
 ```
 
 ### 2. Loading the data: 
 
 ```{r data loading}
-rawdata <- read.csv("https://github.com/hnguye01/hnguye01.github.io/raw/master/DS6306/Data/CaseStudy2-data.csv")
-head(rawdata)
-view(rawdata) #There are 870 entries, 36 total columns
-length(rawdata) #[1] 36
-skim(rawdata) #so sweet 0- for data summary
+rawdata0 <- read.csv("CaseStudy2-data.csv")
+head(rawdata0)
+view(rawdata0) #There are 870 entries, 36 total columns
+length(rawdata0) #[1] 36
+skim(rawdata0) #so sweet 0- for data summary
+
+rawdata <- rawdata0
 ```
 
 

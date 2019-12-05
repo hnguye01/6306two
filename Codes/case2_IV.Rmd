@@ -30,11 +30,13 @@ library(GGally) #for ggpairs
 
 
 ```{r data loading, echo=F, results='hide', message=F, warning=F}
-rawdata <- read.csv("https://github.com/hnguye01/hnguye01.github.io/raw/master/DS6306/Data/CaseStudy2-data.csv")
-head(rawdata)
-view(rawdata) #There are 870 entries, 36 total columns
-length(rawdata) #[1] 36
-skim(rawdata) #so sweet 0- for data summary
+rawdata0 <- read.csv("CaseStudy2-data.csv")
+head(rawdata0)
+view(rawdata0) #There are 870 entries, 36 total columns
+length(rawdata0) #[1] 36
+skim(rawdata0) #so sweet 0- for data summary
+
+rawdata <- rawdata0
 ```
 
 ```{r dropping columns, echo=F, results='hide', message=F, warning=F}

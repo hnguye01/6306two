@@ -1,0 +1,90 @@
+---
+title: "MSDS 6306 - Case Study 02"
+author: "Huy Hoang Nguyen"
+date: "12/05/2019"
+output:
+  html_document: default
+pdf_document: default
+---
+
+
+
+
+```{r libraries, echo=F, results='hide', message=F, warning=F}
+library(tidyverse) #The "tidyverse" collects some of the most versatile R packages: ggplot2, dplyr, tidyr, readr, purrr, and tibble. The packages work in harmony to clean, process, model, and visualize data.
+library(skimr) #for data summary - so sweet and I like a lot this library
+library(mice) #package provides a nice function md.pattern() to get a better understanding of the pattern of missing data
+library(VIM) #more helpful visual representation can be obtained using the VIM package for agrr
+library(naniar) #https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html (for gg_mis_var) (Missing values)
+library(mlbench) #collection of artificial and real-world machine learning benchmark problems, including, e.g., several data sets from the UCI repository. (also has BostonHousing)
+library(caret)
+library(mlr)
+library(tidyverse)
+library(ggthemes)
+library(gplots)
+library(randomForest)
+library(corrplot)
+library(kableExtra)
+library(plotly)
+library(GGally) #for ggpairs
+library(Boruta) #for Automated EDA later
+library(readxl) #read excel
+library(e1071) #Naive Bayes
+
+```
+
+
+```{r data loading, echo=F, results='hide', message=F, warning=F}
+
+
+rawdata0 <- read.csv("CaseStudy2-data.csv")
+head(rawdata0)
+view(rawdata0) #There are 870 entries, 36 total columns
+length(rawdata0) #[1] 36
+skim(rawdata0) #so sweet 0- for data summary
+
+rawdata <- rawdata0
+```
+
+
+## VI. EDA5 - Multiple Linear Regression for Salary 
+
+
+Here we will use our EDA4 to build model for Monthly Income.
+
+
+### 1. Build a Model   
+
+
+I will build a multiple linear regression on Monthly Income related to 14 important variables in the last part.
+
+
+
+```{r}
+
+set.seed(100)
+data3 <- select(rawdata, "MonthlyIncome", "Age", "Attrition", "BusinessTravel", "Department", "Education", "JobLevel", "JobRole", "NumCompaniesWorked", "TotalWorkingYears", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager")
+splitPerc1 = 0.8
+trainIndices1 = sample(1:dim(data3)[1],round(splitPerc1 * dim(data3)[1]))
+train1 = data3[trainIndices1,]
+test1 = data3[-trainIndices1,]
+lm1 = lm(MonthlyIncome ~ ., data = train1)
+summary(lm1)
+pred1 = predict(lm1, test1)
+RMSE = sqrt(mean((test1$MonthlyIncome - pred1)^2))
+RMSE
+
+
+```
+
+
+Then RMSE is around $1031.816.   
+
+
+
+### 2. Validation Requirement for Salary
+
+
+
+
+
