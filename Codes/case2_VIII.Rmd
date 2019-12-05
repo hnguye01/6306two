@@ -47,7 +47,7 @@ rawdata <- rawdata0
 ```
 
 
-## VIII. EDA6 - Naive Bayes classifiers for Attrition
+## VIII. EDA6 - Naive Bayes classifiers and Validation for Attrition
 
 
 Here I will use our EDA4 to build model for Attrition. I will use these vatiables: Age, Department,  EnvironmentSatisfaction,  JobInvolvement,  JobLevel, JobRole,  JobSatisfaction, MaritalStatus,  MonthlyIncome, NumCompaniesWorked,  OverTime, StockOptionLevel,  TotalWorkingYears, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager. 

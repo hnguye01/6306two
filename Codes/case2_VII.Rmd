@@ -47,7 +47,7 @@ rawdata <- rawdata0
 ```
 
 
-## VII. EDA5 - Multiple Linear Regression for Salary 
+## VII. EDA5 - Multiple Linear Regression and Validation for Salary 
 
 
 Here we will use our EDA4 to build model for Monthly Income.
