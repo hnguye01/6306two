@@ -28,7 +28,7 @@ Huy Hoang Nguyen: hoangnguyen@smu.edu
 
 [CodeBook]: <https://github.com/hnguye01/6306two/tree/master/Codes>  
 [Validation]: <https://github.com/hnguye01/6306two/tree/master/Validation%20>
-[DDSAnalytics App]: <http://www.hoangnguyen.us>
+[DDSAnalytics App]: < https://hnguye01.shinyapps.io/DDSAnalyticsApp/>
 [Datasets]: <https://github.com/hnguye01/6306two/tree/master/Datasets>
 
 
