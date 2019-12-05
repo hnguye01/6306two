@@ -8,7 +8,9 @@
 
 
 ## Contents
-* [CodeBook] - contains a codebook for the project
+* [CodeBook] - contains a codebook for the project   
+  - case2 - full codes of the project  
+  - case2_I - Project Descriptions  
 * [Presentations] - My Final Presentation Slides 
 
 ## Author  
