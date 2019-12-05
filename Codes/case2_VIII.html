@@ -370,150 +370,158 @@ summary {
 </div>
 
 
-<div id="vii.-eda5---multiple-linear-regression-for-salary" class="section level2">
-<h2>VII. EDA5 - Multiple Linear Regression for Salary</h2>
-<p>Here we will use our EDA4 to build model for Monthly Income.</p>
+<div id="viii.-eda6---naive-bayes-classifiers-for-attrition" class="section level2">
+<h2>VIII. EDA6 - Naive Bayes classifiers for Attrition</h2>
+<p>Here I will use our EDA4 to build model for Attrition. I will use these vatiables: Age, Department, EnvironmentSatisfaction, JobInvolvement, JobLevel, JobRole, JobSatisfaction, MaritalStatus, MonthlyIncome, NumCompaniesWorked, OverTime, StockOptionLevel, TotalWorkingYears, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager.</p>
 <div id="build-a-model" class="section level3">
 <h3>1. Build a Model</h3>
-<p>I will build a multiple linear regression on Monthly Income related to 14 important variables in the last part.</p>
-<pre class="r"><code>set.seed(100)
-data3 &lt;- select(rawdata, &quot;MonthlyIncome&quot;, &quot;Age&quot;, &quot;Attrition&quot;, &quot;BusinessTravel&quot;, &quot;Department&quot;, &quot;Education&quot;, &quot;JobLevel&quot;, &quot;JobRole&quot;, &quot;NumCompaniesWorked&quot;, &quot;TotalWorkingYears&quot;, &quot;YearsAtCompany&quot;, &quot;YearsInCurrentRole&quot;, &quot;YearsSinceLastPromotion&quot;, &quot;YearsWithCurrManager&quot;)
-splitPerc1 = 0.8
-trainIndices1 = sample(1:dim(data3)[1],round(splitPerc1 * dim(data3)[1]))
-train1 = data3[trainIndices1,]
-test1 = data3[-trainIndices1,]
-lm1 = lm(MonthlyIncome ~ ., data = train1)
-summary(lm1)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = MonthlyIncome ~ ., data = train1)
+<p>I will use Naive Bayes classifiers to build a model here.</p>
+<pre class="r"><code>data4 &lt;- select(rawdata, &quot;Attrition&quot;, &quot;Age&quot;, &quot;Department&quot;,  &quot;EnvironmentSatisfaction&quot;,  &quot;JobInvolvement&quot;,  &quot;JobLevel&quot;, &quot;JobRole&quot;,  &quot;JobSatisfaction&quot;, &quot;MaritalStatus&quot;,  &quot;MonthlyIncome&quot;, &quot;NumCompaniesWorked&quot;,  &quot;OverTime&quot;, &quot;StockOptionLevel&quot;,  &quot;TotalWorkingYears&quot;, &quot;WorkLifeBalance&quot;, &quot;YearsAtCompany&quot;, &quot;YearsInCurrentRole&quot;, &quot;YearsWithCurrManager&quot;)
+
+
+set.seed(10000)
+splitPercNB1 = 0.8
+trainIndicesNB1 = sample(1:dim(data4)[1],round(splitPercNB1 * dim(data4)[1]))
+trainNB1 = data4[trainIndicesNB1,]
+testNB1 = data4[-trainIndicesNB1,]
+
+NB1 &lt;- naiveBayes(Attrition~.,data = trainNB1,laplace = -1)
+predNB1 = predict(NB1, testNB1)
+
+table(as.factor(testNB1$Attrition),predNB1)</code></pre>
+<pre><code>##      predNB1
+##        No Yes
+##   No  125  26
+##   Yes   8  15</code></pre>
+<pre class="r"><code>#Confusion Matrix
+confusion.Matrix = confusionMatrix(predNB1,as.factor(testNB1$Attrition))
+confusion.Matrix</code></pre>
+<pre><code>## Confusion Matrix and Statistics
 ## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -3599.9  -618.2   -28.7   586.9  3976.5 
-## 
-## Coefficients:
-##                                   Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                      -460.4385   584.7780  -0.787 0.431341    
-## Age                                -1.6469     6.3150  -0.261 0.794330    
-## AttritionYes                      104.0117   117.0640   0.889 0.374588    
-## BusinessTravelTravel_Frequently   191.2012   157.9819   1.210 0.226599    
-## BusinessTravelTravel_Rarely       409.2843   135.5348   3.020 0.002625 ** 
-## DepartmentResearch &amp; Development  228.2193   474.6301   0.481 0.630789    
-## DepartmentSales                  -351.1497   481.9957  -0.729 0.466541    
-## Education                         -30.3332    41.4089  -0.733 0.464101    
-## JobLevel                         2791.0173    93.4593  29.863  &lt; 2e-16 ***
-## JobRoleHuman Resources            -33.9349   558.5571  -0.061 0.951573    
-## JobRoleLaboratory Technician     -676.1669   191.3353  -3.534 0.000437 ***
-## JobRoleManager                   4328.4088   305.8894  14.150  &lt; 2e-16 ***
-## JobRoleManufacturing Director     180.1699   192.5615   0.936 0.349790    
-## JobRoleResearch Director         4127.5414   247.1638  16.700  &lt; 2e-16 ***
-## JobRoleResearch Scientist        -355.1583   192.6310  -1.844 0.065663 .  
-## JobRoleSales Executive            570.9446   391.4210   1.459 0.145129    
-## JobRoleSales Representative        95.3766   431.1777   0.221 0.825004    
-## NumCompaniesWorked                 -3.4078    18.8530  -0.181 0.856614    
-## TotalWorkingYears                  49.3545    12.1666   4.057 5.56e-05 ***
-## YearsAtCompany                      1.9822    15.2147   0.130 0.896380    
-## YearsInCurrentRole                 -0.6587    18.5037  -0.036 0.971613    
-## YearsSinceLastPromotion            30.7322    17.2900   1.777 0.075945 .  
-## YearsWithCurrManager              -45.0684    18.8133  -2.396 0.016867 *  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 1066 on 673 degrees of freedom
-## Multiple R-squared:  0.9492, Adjusted R-squared:  0.9475 
-## F-statistic: 571.4 on 22 and 673 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>pred1 = predict(lm1, test1)
-RMSE = sqrt(mean((test1$MonthlyIncome - pred1)^2))
-RMSE</code></pre>
-<pre><code>## [1] 1031.816</code></pre>
-<p>Then RMSE is around $1031.816.</p>
+##           Reference
+## Prediction  No Yes
+##        No  125   8
+##        Yes  26  15
+##                                           
+##                Accuracy : 0.8046          
+##                  95% CI : (0.7378, 0.8607)
+##     No Information Rate : 0.8678          
+##     P-Value [Acc &gt; NIR] : 0.992836        
+##                                           
+##                   Kappa : 0.3604          
+##                                           
+##  Mcnemar's Test P-Value : 0.003551        
+##                                           
+##             Sensitivity : 0.8278          
+##             Specificity : 0.6522          
+##          Pos Pred Value : 0.9398          
+##          Neg Pred Value : 0.3659          
+##              Prevalence : 0.8678          
+##          Detection Rate : 0.7184          
+##    Detection Prevalence : 0.7644          
+##       Balanced Accuracy : 0.7400          
+##                                           
+##        'Positive' Class : No              
+## </code></pre>
+<pre class="r"><code>Sensitivity = confusion.Matrix$byClass['Sensitivity']
+Specificity = confusion.Matrix$byClass['Specificity']
+Accuracy = confusion.Matrix$overall['Accuracy']
+
+Accuracy</code></pre>
+<pre><code>##  Accuracy 
+## 0.8045977</code></pre>
+<pre class="r"><code>Sensitivity</code></pre>
+<pre><code>## Sensitivity 
+##   0.8278146</code></pre>
+<pre class="r"><code>Specificity</code></pre>
+<pre><code>## Specificity 
+##   0.6521739</code></pre>
 </div>
-<div id="validation-requirement-for-salary" class="section level3">
-<h3>2. Validation Requirement for Salary</h3>
-<p>Here I will use the file CaseStudy2CompSet No Salary.xlsx and create new dataframe case2nosalary1 with the same variables as the dataframe data3 in the last step (Build a Model) (without MonthlyIncome variable).</p>
-<pre class="r"><code>case2nosalary &lt;- read_excel(&quot;CaseStudy2CompSet No Salary.xlsx&quot;)
-case2nosalary1 &lt;- select(case2nosalary, &quot;Age&quot;, &quot;Attrition&quot;, &quot;BusinessTravel&quot;, &quot;Department&quot;, &quot;Education&quot;, &quot;JobLevel&quot;, &quot;JobRole&quot;, &quot;NumCompaniesWorked&quot;, &quot;TotalWorkingYears&quot;, &quot;YearsAtCompany&quot;, &quot;YearsInCurrentRole&quot;, &quot;YearsSinceLastPromotion&quot;, &quot;YearsWithCurrManager&quot;)</code></pre>
-<p>Now I will use the model built in the last step to predicting the salary for the file CaseStudy2CompSet No Salary.xlsx.</p>
-<pre class="r"><code>lm2 = lm(MonthlyIncome ~ ., data = data3)
-pred2 = predict(lm2, case2nosalary1)
+<div id="validation-requirement-for-attrition" class="section level3">
+<h3>2. Validation Requirement for Attrition</h3>
+<p>Here I will use the file CaseStudy2CompSet No Attrition.csv and create new dataframe case2noattrition1 with the same variables as the dataframe data4 in the last step (Build a Model) (without Attrition variable).</p>
+<pre class="r"><code>case2noattrition &lt;- read.csv(&quot;CaseStudy2CompSet No Attrition.csv&quot;)
+case2noattrition1 &lt;- select(case2noattrition, &quot;Age&quot;, &quot;Department&quot;,  &quot;EnvironmentSatisfaction&quot;,  &quot;JobInvolvement&quot;,  &quot;JobLevel&quot;, &quot;JobRole&quot;,  &quot;JobSatisfaction&quot;, &quot;MaritalStatus&quot;,  &quot;MonthlyIncome&quot;, &quot;NumCompaniesWorked&quot;,  &quot;OverTime&quot;, &quot;StockOptionLevel&quot;,  &quot;TotalWorkingYears&quot;, &quot;WorkLifeBalance&quot;, &quot;YearsAtCompany&quot;, &quot;YearsInCurrentRole&quot;, &quot;YearsWithCurrManager&quot;)</code></pre>
+<p>Now I will use the model built in the last step to predicting Attrition for the file CaseStudy2CompSet No Attrition.csv.</p>
+<pre class="r"><code>set.seed(10000)
+
+NB2 &lt;- naiveBayes(Attrition~.,data = data4,laplace = -1)
+predNB2 = predict(NB2, case2noattrition1)
 
 
-MonthlyIncome = pred2
-MonthlyIncome = as.data.frame(MonthlyIncome)
+Attrition = predNB2
+Attrition = as.data.frame(Attrition)
+case2noattrition2 = cbind(case2noattrition,Attrition)
 
-case2nosalary2 = cbind(case2nosalary, MonthlyIncome)
+write.csv(case2noattrition2,&quot;Case2PredictionsNguyenAttrition.csv&quot;, row.names = FALSE)
 
+case2noattrition3 &lt;- read.csv(&quot;Case2PredictionsNguyenAttrition.csv&quot;, header = T)
 
-write.csv(case2nosalary2, &quot;Case2PredictionsNguyenSalary.csv&quot;, row.names = FALSE)
-
-case2nosalary3 &lt;- read.csv(&quot;Case2PredictionsNguyenSalary.csv&quot;, header = T)
-
-head(case2nosalary3)</code></pre>
-<pre><code>##    ID Age Attrition    BusinessTravel DailyRate             Department
-## 1 871  43        No Travel_Frequently      1422                  Sales
-## 2 872  33        No     Travel_Rarely       461 Research &amp; Development
-## 3 873  55       Yes     Travel_Rarely       267                  Sales
-## 4 874  36        No        Non-Travel      1351 Research &amp; Development
-## 5 875  27        No     Travel_Rarely      1302 Research &amp; Development
-## 6 876  39       Yes     Travel_Rarely       895                  Sales
-##   DistanceFromHome Education   EducationField EmployeeCount EmployeeNumber
-## 1                2         4    Life Sciences             1           1849
-## 2               13         1    Life Sciences             1            995
-## 3               13         4        Marketing             1           1372
-## 4                9         4    Life Sciences             1           1949
-## 5               19         3            Other             1           1619
-## 6                5         3 Technical Degree             1             42
+head(case2noattrition3)</code></pre>
+<pre><code>##     ID Age    BusinessTravel DailyRate             Department
+## 1 1171  35     Travel_Rarely       750 Research &amp; Development
+## 2 1172  33     Travel_Rarely       147        Human Resources
+## 3 1173  26     Travel_Rarely      1330 Research &amp; Development
+## 4 1174  55     Travel_Rarely      1311 Research &amp; Development
+## 5 1175  29     Travel_Rarely      1246                  Sales
+## 6 1176  51 Travel_Frequently      1456 Research &amp; Development
+##   DistanceFromHome Education  EducationField EmployeeCount EmployeeNumber
+## 1               28         3   Life Sciences             1           1596
+## 2                2         3 Human Resources             1           1207
+## 3               21         3         Medical             1           1107
+## 4                2         3   Life Sciences             1            505
+## 5               19         3   Life Sciences             1           1497
+## 6                1         4         Medical             1            145
 ##   EnvironmentSatisfaction Gender HourlyRate JobInvolvement JobLevel
-## 1                       1   Male         92              3        2
-## 2                       2 Female         53              3        1
-## 3                       1   Male         85              4        4
-## 4                       1   Male         66              4        1
-## 5                       4   Male         67              2        1
-## 6                       4   Male         56              3        2
-##                 JobRole JobSatisfaction MaritalStatus MonthlyRate
-## 1       Sales Executive               4       Married       19246
-## 2    Research Scientist               4        Single       17241
-## 3       Sales Executive               3        Single        9277
-## 4 Laboratory Technician               2       Married        9238
-## 5 Laboratory Technician               1      Divorced       16290
-## 6  Sales Representative               4       Married        3335
-##   NumCompaniesWorked Over18 OverTime PercentSalaryHike PerformanceRating
-## 1                  1      Y       No                20                 4
-## 2                  3      Y       No                18                 3
-## 3                  6      Y      Yes                17                 3
-## 4                  1      Y       No                22                 4
-## 5                  1      Y       No                11                 3
-## 6                  3      Y       No                14                 3
-##   RelationshipSatisfaction StandardHours StockOptionLevel
-## 1                        3            80                1
-## 2                        1            80                0
-## 3                        3            80                0
-## 4                        2            80                0
-## 5                        1            80                2
-## 6                        3            80                1
-##   TotalWorkingYears TrainingTimesLastYear WorkLifeBalance YearsAtCompany
-## 1                 7                     5               3              7
-## 2                 5                     4               3              3
-## 3                24                     2               2             19
-## 4                 5                     3               3              5
-## 5                 7                     3               3              7
-## 6                19                     6               4              1
-##   YearsInCurrentRole YearsSinceLastPromotion YearsWithCurrManager
-## 1                  7                       7                    7
-## 2                  2                       0                    2
-## 3                  7                       3                    8
-## 4                  4                       0                    2
-## 5                  7                       0                    7
-## 6                  0                       0                    0
-##   MonthlyIncome
-## 1      5665.948
-## 2      2730.876
-## 3     12189.751
-## 4      1954.560
-## 5      2356.053
-## 6      6102.791</code></pre>
-<p>Later, I will upload the preditecd file Case2PredictionsNguyenSalary.csv for Salary into github.</p>
+## 1                       2   Male         46              4        2
+## 2                       2   Male         99              3        1
+## 3                       1   Male         37              3        1
+## 4                       3 Female         97              3        4
+## 5                       3   Male         77              2        2
+## 6                       1 Female         30              2        3
+##                     JobRole JobSatisfaction MaritalStatus MonthlyIncome
+## 1     Laboratory Technician               3       Married          3407
+## 2           Human Resources               3       Married          3600
+## 3     Laboratory Technician               3      Divorced          2377
+## 4                   Manager               4        Single         16659
+## 5           Sales Executive               3      Divorced          8620
+## 6 Healthcare Representative               1        Single          7484
+##   MonthlyRate NumCompaniesWorked Over18 OverTime PercentSalaryHike
+## 1       25348                  1      Y       No                17
+## 2        8429                  1      Y       No                13
+## 3       19373                  1      Y       No                20
+## 4       23258                  2      Y      Yes                13
+## 5       23757                  1      Y       No                14
+## 6       25796                  3      Y       No                20
+##   PerformanceRating RelationshipSatisfaction StandardHours
+## 1                 3                        4            80
+## 2                 3                        4            80
+## 3                 4                        3            80
+## 4                 3                        3            80
+## 5                 3                        3            80
+## 6                 4                        3            80
+##   StockOptionLevel TotalWorkingYears TrainingTimesLastYear WorkLifeBalance
+## 1                2                10                     3               2
+## 2                1                 5                     2               3
+## 3                1                 1                     0               2
+## 4                0                30                     2               3
+## 5                2                10                     3               3
+## 6                0                23                     1               2
+##   YearsAtCompany YearsInCurrentRole YearsSinceLastPromotion
+## 1             10                  9                       6
+## 2              5                  4                       1
+## 3              1                  1                       0
+## 4              5                  4                       1
+## 5             10                  7                       0
+## 6             13                 12                      12
+##   YearsWithCurrManager Attrition
+## 1                    8        No
+## 2                    4        No
+## 3                    0        No
+## 4                    2        No
+## 5                    4        No
+## 6                    8        No</code></pre>
+<p>Later, I will upload the preditecd file Case2PredictionsNguyenAttrition.csv for Salary into github.</p>
 </div>
 </div>
 

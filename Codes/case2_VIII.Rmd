@@ -1,0 +1,137 @@
+---
+title: "MSDS 6306 - Case Study 02"
+author: "Huy Hoang Nguyen"
+date: "12/05/2019"
+output:
+  html_document: default
+pdf_document: default
+---
+
+
+
+
+```{r libraries, echo=F, results='hide', message=F, warning=F}
+library(tidyverse) #The "tidyverse" collects some of the most versatile R packages: ggplot2, dplyr, tidyr, readr, purrr, and tibble. The packages work in harmony to clean, process, model, and visualize data.
+library(skimr) #for data summary - so sweet and I like a lot this library
+library(mice) #package provides a nice function md.pattern() to get a better understanding of the pattern of missing data
+library(VIM) #more helpful visual representation can be obtained using the VIM package for agrr
+library(naniar) #https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html (for gg_mis_var) (Missing values)
+library(mlbench) #collection of artificial and real-world machine learning benchmark problems, including, e.g., several data sets from the UCI repository. (also has BostonHousing)
+library(caret)
+library(mlr)
+library(tidyverse)
+library(ggthemes)
+library(gplots)
+library(randomForest)
+library(corrplot)
+library(kableExtra)
+library(plotly)
+library(GGally) #for ggpairs
+library(Boruta) #for Automated EDA later
+library(readxl) #read excel
+library(e1071) #Naive Bayes
+
+```
+
+
+```{r data loading, echo=F, results='hide', message=F, warning=F}
+
+
+rawdata0 <- read.csv("CaseStudy2-data.csv")
+head(rawdata0)
+view(rawdata0) #There are 870 entries, 36 total columns
+length(rawdata0) #[1] 36
+skim(rawdata0) #so sweet 0- for data summary
+
+rawdata <- rawdata0
+```
+
+
+## VIII. EDA6 - Naive Bayes classifiers for Attrition
+
+
+Here I will use our EDA4 to build model for Attrition. I will use these vatiables: Age, Department,  EnvironmentSatisfaction,  JobInvolvement,  JobLevel, JobRole,  JobSatisfaction, MaritalStatus,  MonthlyIncome, NumCompaniesWorked,  OverTime, StockOptionLevel,  TotalWorkingYears, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager. 
+
+### 1. Build a Model   
+
+
+I will use Naive Bayes classifiers to build a model here.
+
+
+```{r}
+
+
+data4 <- select(rawdata, "Attrition", "Age", "Department",  "EnvironmentSatisfaction",  "JobInvolvement",  "JobLevel", "JobRole",  "JobSatisfaction", "MaritalStatus",  "MonthlyIncome", "NumCompaniesWorked",  "OverTime", "StockOptionLevel",  "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+
+
+set.seed(10000)
+splitPercNB1 = 0.8
+trainIndicesNB1 = sample(1:dim(data4)[1],round(splitPercNB1 * dim(data4)[1]))
+trainNB1 = data4[trainIndicesNB1,]
+testNB1 = data4[-trainIndicesNB1,]
+
+NB1 <- naiveBayes(Attrition~.,data = trainNB1,laplace = -1)
+predNB1 = predict(NB1, testNB1)
+
+table(as.factor(testNB1$Attrition),predNB1)
+
+#Confusion Matrix
+confusion.Matrix = confusionMatrix(predNB1,as.factor(testNB1$Attrition))
+confusion.Matrix
+Sensitivity = confusion.Matrix$byClass['Sensitivity']
+Specificity = confusion.Matrix$byClass['Specificity']
+Accuracy = confusion.Matrix$overall['Accuracy']
+
+Accuracy
+Sensitivity
+Specificity
+
+
+
+
+
+
+
+```
+
+### 2. Validation Requirement for Attrition  
+
+
+Here I will use the file CaseStudy2CompSet No Attrition.csv and create new dataframe case2noattrition1  with the same variables as the dataframe data4 in the last step (Build a Model) (without Attrition variable).
+
+
+```{r}
+case2noattrition <- read.csv("CaseStudy2CompSet No Attrition.csv")
+case2noattrition1 <- select(case2noattrition, "Age", "Department",  "EnvironmentSatisfaction",  "JobInvolvement",  "JobLevel", "JobRole",  "JobSatisfaction", "MaritalStatus",  "MonthlyIncome", "NumCompaniesWorked",  "OverTime", "StockOptionLevel",  "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+```
+
+
+Now I will use  the model built in the last step to predicting Attrition for the file CaseStudy2CompSet No Attrition.csv. 
+
+
+
+```{r}
+
+
+set.seed(10000)
+
+NB2 <- naiveBayes(Attrition~.,data = data4,laplace = -1)
+predNB2 = predict(NB2, case2noattrition1)
+
+
+Attrition = predNB2
+Attrition = as.data.frame(Attrition)
+case2noattrition2 = cbind(case2noattrition,Attrition)
+
+write.csv(case2noattrition2,"Case2PredictionsNguyenAttrition.csv", row.names = FALSE)
+
+case2noattrition3 <- read.csv("Case2PredictionsNguyenAttrition.csv", header = T)
+
+head(case2noattrition3)
+```
+
+
+
+
+Later, I will upload the preditecd file Case2PredictionsNguyenAttrition.csv for Salary into github. 
+

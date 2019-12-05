@@ -47,7 +47,7 @@ rawdata <- rawdata0
 ```
 
 
-## VI. EDA5 - Multiple Linear Regression for Salary 
+## VII. EDA5 - Multiple Linear Regression for Salary 
 
 
 Here we will use our EDA4 to build model for Monthly Income.
@@ -85,6 +85,40 @@ Then RMSE is around $1031.816.
 ### 2. Validation Requirement for Salary
 
 
+Here I will use the file CaseStudy2CompSet No Salary.xlsx and create new dataframe case2nosalary1  with the same variables as the dataframe data3 in the last step (Build a Model) (without MonthlyIncome variable).
+
+
+```{r}
+case2nosalary <- read_excel("CaseStudy2CompSet No Salary.xlsx")
+case2nosalary1 <- select(case2nosalary, "Age", "Attrition", "BusinessTravel", "Department", "Education", "JobLevel", "JobRole", "NumCompaniesWorked", "TotalWorkingYears", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager")
+```
+
+
+Now I will use  the model built in the last step to predicting the salary for the file CaseStudy2CompSet No Salary.xlsx. 
+
+
+
+```{r}
+
+lm2 = lm(MonthlyIncome ~ ., data = data3)
+pred2 = predict(lm2, case2nosalary1)
+
+
+MonthlyIncome = pred2
+MonthlyIncome = as.data.frame(MonthlyIncome)
+
+case2nosalary2 = cbind(case2nosalary, MonthlyIncome)
+
+
+write.csv(case2nosalary2, "Case2PredictionsNguyenSalary.csv", row.names = FALSE)
+
+case2nosalary3 <- read.csv("Case2PredictionsNguyenSalary.csv", header = T)
+
+head(case2nosalary3)
+
+```
+
+Later, I will upload the preditecd file Case2PredictionsNguyenSalary.csv for Salary into github. 
 
 
 
