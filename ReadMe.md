@@ -25,6 +25,6 @@
 Huy Hoang Nguyen: hoangnguyen@smu.edu 
 
 [CodeBook]: <https://github.com/hnguye01/6306two/tree/master/Codes>  
-Validation]: <https://github.com/hnguye01/6306two/tree/master/Validation>
+[Validation]: <https://github.com/hnguye01/6306two/tree/master/Validation>
 
 
