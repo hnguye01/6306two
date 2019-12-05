@@ -10,7 +10,7 @@
 ## Contents
 * [CodeBook] - contains a codebook for the project   
   - case2 - full codes of the project  
-  - case2_I - Project Descriptions  
+  - case2_I - Project Descriptions   - https://hnguye01.github.io/DS6306/html/case2_I.html
   - case2_II - Preparing Steps  
   - case2_III - EDA1 - Analysis of each variable and some related variables   
   - case2_IV - EDA2 - T-test Analysis   
@@ -22,6 +22,16 @@
 * [Presentations] - My Final Presentation Slides 
 * [DDSAnalytics App] - an App for data visualization 
 * [Datasets] - contains project descriptions files and datatsets used in this project 
+* HTML Links
+  - case2 - full codes of the project  
+  - case2_I - https://hnguye01.github.io/DS6306/html/case2_I.html
+  - case2_II - Preparing Steps  
+  - case2_III - EDA1 - Analysis of each variable and some related variables   
+  - case2_IV - EDA2 - T-test Analysis   
+  - case2_V - EDA3 - Numeric variables correlation  
+  - case2_VI - EDA4 - Automated EDA  
+  - case2_VII - EDA5 - Multiple Linear Regression and Validation for Salary  
+  - case2_VIII - EDA6 - Naive Bayes classifiers and Validation for Attrition 
 
 ## Author  
 Huy Hoang Nguyen: hoangnguyen@smu.edu 
