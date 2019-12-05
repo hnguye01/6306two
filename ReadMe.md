@@ -17,11 +17,14 @@
   - case2_V - EDA3 - Numeric variables correlation  
   - case2_VI - EDA4 - Automated EDA  
   - case2_VII - EDA5 - Multiple Linear Regression and Validation for Salary  
-  - case2_VIII - EDA6 - Naive Bayes classifiers and Validation for Attrition  
+  - case2_VIII - EDA6 - Naive Bayes classifiers and Validation for Attrition 
+* [Validation] - contains CSV files related to the Prediction and Validation for Salary and Attrition  
 * [Presentations] - My Final Presentation Slides 
 
 ## Author  
 Huy Hoang Nguyen: hoangnguyen@smu.edu 
 
 [CodeBook]: <https://github.com/hnguye01/6306two/tree/master/Codes>  
+Validation]: <https://github.com/hnguye01/6306two/tree/master/Validation>
+
 
