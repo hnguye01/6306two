@@ -1284,7 +1284,7 @@ Then I will use important variable to build a model later: Age, Department,  Env
 
 
 
-## VII. EDA5 - Multiple Linear Regression for Salary 
+## VII. EDA5 - Multiple Linear Regression and Validation for Salary 
 
 
 Here we will use our EDA4 to build model for Monthly Income.
@@ -1360,7 +1360,7 @@ Later, I will upload the preditecd file Case2PredictionsNguyenSalary.csv for Sal
 
 
 
-## VIII. EDA6 - Naive Bayes classifiers for Attrition
+## VIII. EDA6 - Naive Bayes classifiers and Validation for Attrition
 
 
 Here I will use our EDA4 to build model for Attrition. I will use these vatiables: Age, Department,  EnvironmentSatisfaction,  JobInvolvement,  JobLevel, JobRole,  JobSatisfaction, MaritalStatus,  MonthlyIncome, NumCompaniesWorked,  OverTime, StockOptionLevel,  TotalWorkingYears, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager. 
@@ -1449,7 +1449,7 @@ head(case2noattrition3)
 Later, I will upload the preditecd file Case2PredictionsNguyenAttrition.csv for Salary into github. 
 
 
+## Conclusion
 
-
-
+In this analysis, we have seen the entire process from importing the dataset and pre-processing data, exploring data analysis with different levels (each variales, t-test, numerical variable correlation, automated EDA) and then building models using different methods (multiple linear regression, Naive Bayes classifiers). Finally, we predicted and validated the two datasets for Salary and Attrition.
 
