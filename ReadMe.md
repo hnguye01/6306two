@@ -40,7 +40,7 @@ Huy Hoang Nguyen: hoangnguyen@smu.edu
 [CodeBook]: <https://github.com/hnguye01/6306two/tree/master/Codes>  
 [Validation]: <https://github.com/hnguye01/6306two/tree/master/Validation%20>
 [Presentations]: <https://github.com/hnguye01/6306two/tree/master/Presentation>
-[Youtube Presentation]: <https://youtu.be/qHFrfZBCq8s>
+[Youtube Presentation]: <https://youtu.be/mnCNP81-hLA>
 [DDSAnalytics App]: < https://hnguye01.shinyapps.io/DDSAnalyticsApp/>
 [Datasets]: <https://github.com/hnguye01/6306two/tree/master/Datasets>
 
