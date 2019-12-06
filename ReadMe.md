@@ -24,15 +24,15 @@
 * [DDSAnalytics App] - an App for data visualization 
 * [Datasets] - contains project descriptions files and datatsets used in this project 
 * HTML Links
-  - case2 - full codes of the project  
+  - case2 - https://hnguye01.github.io/DS6306/html/case2.html  
   - case2_I - https://hnguye01.github.io/DS6306/html/case2_I.html
-  - case2_II - Preparing Steps  
-  - case2_III - EDA1 - Analysis of each variable and some related variables   
-  - case2_IV - EDA2 - T-test Analysis   
-  - case2_V - EDA3 - Numeric variables correlation  
-  - case2_VI - EDA4 - Automated EDA  
-  - case2_VII - EDA5 - Multiple Linear Regression and Validation for Salary  
-  - case2_VIII - EDA6 - Naive Bayes classifiers and Validation for Attrition 
+  - case2_II - https://hnguye01.github.io/DS6306/html/case2_II.html  
+  - case2_III - https://hnguye01.github.io/DS6306/html/case2_III.html   
+  - case2_IV - https://hnguye01.github.io/DS6306/html/case2_IV.html   
+  - case2_V - https://hnguye01.github.io/DS6306/html/case2_V.html  
+  - case2_VI - https://hnguye01.github.io/DS6306/html/case2_VI.html 
+  - case2_VII - https://hnguye01.github.io/DS6306/html/case2_VII.html  
+  - case2_VIII - https://hnguye01.github.io/DS6306/html/case2_VIII.html 
 
 ## Author  
 Huy Hoang Nguyen: hoangnguyen@smu.edu 
