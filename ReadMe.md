@@ -20,7 +20,6 @@
   - case2_VIII - EDA6 - Naive Bayes classifiers and Validation for Attrition 
 * [Validation] - contains CSV files related to the Prediction and Validation for Salary and Attrition  
 * [Presentations] - My Final Presentation Slides 
-* [Youtube Presentation] - Youtube link of my presentation
 * [DDSAnalytics App] - an App for data visualization 
 * [Datasets] - contains project descriptions files and datatsets used in this project 
 * HTML Links
